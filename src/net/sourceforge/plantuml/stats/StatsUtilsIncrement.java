@@ -44,7 +44,6 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.activitydiagram3.ActivityDiagram3;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.directdot.PSystemDot;
-import net.sourceforge.plantuml.eggs.PSystemWelcome;
 import net.sourceforge.plantuml.error.PSystemErrorUtils;
 import net.sourceforge.plantuml.math.PSystemMath;
 import net.sourceforge.plantuml.salt.PSystemSalt;
@@ -133,9 +132,6 @@ public class StatsUtilsIncrement {
 		}
 		if (type == PSystemDot.class) {
 			return "Dot";
-		}
-		if (type == PSystemWelcome.class) {
-			return "Welcome";
 		}
 		if (type.getSimpleName().equals("PSystemDitaa")) {
 			return "Ditaa";

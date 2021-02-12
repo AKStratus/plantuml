@@ -35,7 +35,6 @@
  */
 package net.sourceforge.plantuml;
 
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
@@ -55,38 +54,20 @@ import javax.script.ScriptException;
 import net.sourceforge.plantuml.anim.Animation;
 import net.sourceforge.plantuml.anim.AnimationDecoder;
 import net.sourceforge.plantuml.api.ImageDataSimple;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.core.Diagram;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.core.UmlSource;
 import net.sourceforge.plantuml.cucadiagram.DisplaySection;
 import net.sourceforge.plantuml.cucadiagram.UnparsableGraphvizException;
-import net.sourceforge.plantuml.flashcode.FlashCodeFactory;
-import net.sourceforge.plantuml.flashcode.FlashCodeUtils;
-import net.sourceforge.plantuml.fun.IconLoader;
-import net.sourceforge.plantuml.graphic.GraphicPosition;
-import net.sourceforge.plantuml.graphic.GraphicStrings;
-import net.sourceforge.plantuml.graphic.UDrawable;
 import net.sourceforge.plantuml.mjpeg.MJPEGGenerator;
 import net.sourceforge.plantuml.pdf.PdfConverter;
 import net.sourceforge.plantuml.security.ImageIO;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityUtils;
-import net.sourceforge.plantuml.style.ClockwiseTopRightBottomLeft;
 import net.sourceforge.plantuml.style.NoStyleAvailableException;
 import net.sourceforge.plantuml.svek.EmptySvgException;
 import net.sourceforge.plantuml.svek.GraphvizCrash;
-import net.sourceforge.plantuml.svek.TextBlockBackcolored;
-import net.sourceforge.plantuml.ugraphic.AffineTransformType;
-import net.sourceforge.plantuml.ugraphic.ImageBuilder;
-import net.sourceforge.plantuml.ugraphic.ImageParameter;
-import net.sourceforge.plantuml.ugraphic.PixelImage;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UImage;
-import net.sourceforge.plantuml.ugraphic.UTranslate;
-import net.sourceforge.plantuml.ugraphic.color.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.color.HColor;
-import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 import net.sourceforge.plantuml.version.Version;
 
 public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annotated, WithSprite {
@@ -183,7 +164,7 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 			e.printStackTrace();
 			exportDiagramError(os, e.getCause(), fileFormatOption, seed, e.getGraphvizVersion());
 		} catch (Throwable e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			exportDiagramError(os, e, fileFormatOption, seed, null);
 		}
 		return ImageDataSimple.error();
@@ -197,49 +178,15 @@ public abstract class UmlDiagram extends TitledDiagram implements Diagram, Annot
 
 	public static void exportDiagramError(OutputStream os, Throwable exception, FileFormatOption fileFormat, long seed,
 			String metadata, String flash, List<String> strings) throws IOException {
-
-		if (fileFormat.getFileFormat() == FileFormat.ATXT || fileFormat.getFileFormat() == FileFormat.UTXT) {
-			exportDiagramErrorText(os, exception, strings);
-			return;
+		final PrintWriter pw = SecurityUtils.createPrintWriter(os);
+		exception.printStackTrace(pw);
+		pw.println();
+		pw.println();
+		for (String s : strings) {
+			s = s.replaceAll("\\</?\\w+?\\>", "");
+			pw.println(s);
 		}
-
-		strings.addAll(CommandExecutionResult.getStackTrace(exception));
-		HColor backcolor = HColorUtils.WHITE;
-		final ImageParameter imageParameter = new ImageParameter(new ColorMapperIdentity(), false, null, 1.0, metadata,
-				null, ClockwiseTopRightBottomLeft.none(), backcolor);
-
-		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
-
-		BufferedImage im2 = null;
-		if (flash != null) {
-			final FlashCodeUtils utils = FlashCodeFactory.getFlashCodeUtils();
-			try {
-				im2 = utils.exportFlashcode(flash, Color.BLACK, Color.WHITE);
-			} catch (Throwable e) {
-				Log.error("Issue in flashcode generation " + e);
-				// e.printStackTrace();
-			}
-			if (im2 != null) {
-				GraphvizCrash.addDecodeHint(strings);
-			}
-		}
-		final BufferedImage im = im2;
-		final TextBlockBackcolored graphicStrings = GraphicStrings.createBlackOnWhite(strings, IconLoader.getRandom(),
-				GraphicPosition.BACKGROUND_CORNER_TOP_RIGHT);
-
-		if (im == null) {
-			imageBuilder.setUDrawable(graphicStrings);
-		} else {
-			imageBuilder.setUDrawable(new UDrawable() {
-				public void drawU(UGraphic ug) {
-					graphicStrings.drawU(ug);
-					final double height = graphicStrings.calculateDimension(ug.getStringBounder()).getHeight();
-					ug = ug.apply(UTranslate.dy(height));
-					ug.draw(new UImage(new PixelImage(im, AffineTransformType.TYPE_NEAREST_NEIGHBOR)).scale(3));
-				}
-			});
-		}
-		imageBuilder.writeImageTOBEMOVED(fileFormat, seed, os);
+		pw.flush();
 	}
 
 	private static void exportDiagramErrorText(OutputStream os, Throwable exception, List<String> strings) {

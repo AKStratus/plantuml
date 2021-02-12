@@ -62,11 +62,9 @@ import net.sourceforge.plantuml.asciiart.UmlCharArea;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.Display;
-import net.sourceforge.plantuml.eggs.PSystemWelcome;
 import net.sourceforge.plantuml.flashcode.FlashCodeFactory;
 import net.sourceforge.plantuml.flashcode.FlashCodeUtils;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.GraphicPosition;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.HorizontalAlignment;
 import net.sourceforge.plantuml.graphic.InnerStrategy;
@@ -94,7 +92,6 @@ import net.sourceforge.plantuml.ugraphic.color.HColorSet;
 import net.sourceforge.plantuml.ugraphic.color.HColorSimple;
 import net.sourceforge.plantuml.ugraphic.color.HColorUtils;
 import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
-import net.sourceforge.plantuml.version.LicenseInfo;
 import net.sourceforge.plantuml.version.PSystemVersion;
 import net.sourceforge.plantuml.version.Version;
 
@@ -231,22 +228,9 @@ public abstract class PSystemError extends AbstractPSystem {
 				getMetadata(), null, ClockwiseTopRightBottomLeft.none(), backcolor);
 		final ImageBuilder imageBuilder = ImageBuilder.build(imageParameter);
 		imageBuilder.setRandomPixel(true);
-		if (getSource().getTotalLineCountLessThan5()) {
-			udrawable = addWelcome(result);
-		} else {
-			udrawable = result;
-		}
+		udrawable = result;
 		final int min = (int) (System.currentTimeMillis() / 60000L) % 60;
 		// udrawable = addMessageAdopt(udrawable);
-		if (min == 1 || min == 8 || min == 13 || min == 55) {
-			udrawable = addMessagePatreon(udrawable);
-		} else if (min == 15) {
-			udrawable = addMessageLiberapay(udrawable);
-		} else if (min == 30 || min == 39 || min == 48) {
-			udrawable = addMessageDedication(udrawable);
-		} else if (getSource().containsIgnoreCase("arecibo")) {
-			udrawable = addMessageArecibo(udrawable);
-		}
 		imageBuilder.setUDrawable(udrawable);
 		final ImageData imageData = imageBuilder.writeImageTOBEMOVED(fileFormat, seed(), os);
 		((ImageDataAbstract) imageData).setStatus(FileImageData.ERROR);
@@ -269,60 +253,6 @@ public abstract class PSystemError extends AbstractPSystem {
 
 	private List<String> onlyLast(List<String> full) {
 		return full.subList(full.size() - 1, full.size());
-	}
-
-	private TextBlockBackcolored getWelcome() throws IOException {
-		return new PSystemWelcome(GraphicPosition.BACKGROUND_CORNER_TOP_RIGHT).getGraphicStrings();
-	}
-
-	private TextBlock addWelcome(final TextBlockBackcolored result) throws IOException {
-		final TextBlockBackcolored welcome = getWelcome();
-		return TextBlockUtils.mergeTB(welcome, result, HorizontalAlignment.LEFT);
-	}
-
-	private TextBlock addMessageLiberapay(final TextBlock source) throws IOException {
-		if (LicenseInfo.retrieveNamedOrDistributorQuickIsValid()) {
-			return source;
-		}
-		final TextBlock message = getMessageLiberapay();
-		TextBlock result = TextBlockUtils.mergeTB(message, source, HorizontalAlignment.LEFT);
-		result = TextBlockUtils.mergeTB(result, message, HorizontalAlignment.LEFT);
-		return result;
-	}
-
-	private TextBlock addMessagePatreon(final TextBlock source) throws IOException {
-		if (LicenseInfo.retrieveNamedOrDistributorQuickIsValid()) {
-			return source;
-		}
-		final TextBlock message = getMessagePatreon();
-		TextBlock result = TextBlockUtils.mergeTB(message, source, HorizontalAlignment.LEFT);
-		result = TextBlockUtils.mergeTB(result, message, HorizontalAlignment.LEFT);
-		return result;
-	}
-
-	private TextBlock addMessageDedication(final TextBlock source) throws IOException {
-		if (LicenseInfo.retrieveNamedOrDistributorQuickIsValid()) {
-			return source;
-		}
-		final TextBlock message = getMessageDedication();
-		TextBlock result = TextBlockUtils.mergeTB(message, source, HorizontalAlignment.LEFT);
-		return result;
-	}
-
-	private TextBlock addMessageAdopt(final TextBlock source) throws IOException {
-		if (LicenseInfo.retrieveNamedOrDistributorQuickIsValid()) {
-			return source;
-		}
-		final TextBlock message = getMessageAdopt();
-		TextBlock result = TextBlockUtils.mergeTB(message, source, HorizontalAlignment.LEFT);
-		return result;
-	}
-
-	private TextBlock addMessageArecibo(final TextBlock source) throws IOException {
-		final UImage message = new UImage(
-				new PixelImage(PSystemVersion.getArecibo(), AffineTransformType.TYPE_BILINEAR));
-		TextBlock result = TextBlockUtils.mergeLR(source, TextBlockUtils.fromUImage(message), VerticalAlignment.TOP);
-		return result;
 	}
 
 	private TextBlockBackcolored getMessageDedication() {

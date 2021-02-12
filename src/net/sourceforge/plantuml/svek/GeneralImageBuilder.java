@@ -82,7 +82,6 @@ import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.UnparsableGraphvizException;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.cucadiagram.dot.ExeState;
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizVersion;
 import net.sourceforge.plantuml.cucadiagram.dot.Neighborhood;
 import net.sourceforge.plantuml.cucadiagram.entity.EntityFactory;
@@ -462,11 +461,10 @@ public final class GeneralImageBuilder {
 		try {
 			svg = dotStringFactory.getSvg(basefile, dotStrings);
 		} catch (IOException e) {
-			return new GraphvizCrash(source.getPlainString(), GraphvizUtils.graphviz244onWindows(), e);
+			return new GraphvizCrash(source.getPlainString());
 		}
 		if (svg.length() == 0) {
-			return new GraphvizCrash(source.getPlainString(), GraphvizUtils.graphviz244onWindows(),
-					new EmptySvgException());
+			return new GraphvizCrash(source.getPlainString());
 		}
 		final String graphvizVersion = extractGraphvizVersion(svg);
 		try {
@@ -544,8 +542,8 @@ public final class GeneralImageBuilder {
 			throw new IllegalStateException();
 		}
 		final IEntityImage image = printEntityInternal(dotStringFactory, ent);
-		final SvekNode node = dotStringFactory.getBibliotekon().createNode(ent, image, dotStringFactory.getColorSequence(),
-				stringBounder);
+		final SvekNode node = dotStringFactory.getBibliotekon().createNode(ent, image,
+				dotStringFactory.getColorSequence(), stringBounder);
 		dotStringFactory.addNode(node);
 	}
 

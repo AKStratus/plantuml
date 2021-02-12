@@ -51,7 +51,6 @@ import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SecurityProfile;
 import net.sourceforge.plantuml.security.SecurityUtils;
 import net.sourceforge.plantuml.syntax.LanguageDescriptor;
-import net.sourceforge.plantuml.version.License;
 import net.sourceforge.plantuml.version.PSystemVersion;
 import net.sourceforge.plantuml.version.Version;
 
@@ -169,16 +168,8 @@ public class OptionPrint {
 		throw new InterruptedException("exit");
 	}
 
-	public static void printLicense() throws InterruptedException {
-		for (String s : License.getCurrent().getTextFull()) {
-			System.out.println(s);
-		}
-		exit(0);
-	}
-
 	public static void printVersion() throws InterruptedException {
 		System.out.println(Version.fullDescription());
-		System.out.println("(" + License.getCurrent() + " source distribution)");
 		for (String v : interestingProperties()) {
 			System.out.println(v);
 		}

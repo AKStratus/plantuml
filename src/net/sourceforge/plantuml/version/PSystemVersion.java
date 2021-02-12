@@ -50,7 +50,6 @@ import net.sourceforge.plantuml.Run;
 import net.sourceforge.plantuml.core.DiagramDescription;
 import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
-import net.sourceforge.plantuml.dedication.Dedication;
 import net.sourceforge.plantuml.graphic.GraphicPosition;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.preproc.ImportedFiles;
@@ -89,10 +88,6 @@ public class PSystemVersion extends AbstractPSystem {
 		return getImage("logo.png");
 	}
 
-	public static BufferedImage getCharlieImage() {
-		return getImage("charlie.png");
-	}
-
 	public static BufferedImage getTime01() {
 		return getImage("time01.png");
 	}
@@ -105,10 +100,6 @@ public class PSystemVersion extends AbstractPSystem {
 		return getImage("favicon.png");
 	}
 
-	public static BufferedImage getArecibo() {
-		return getImage("arecibo.png");
-	}
-
 	public static BufferedImage getDotc() {
 		return getImage("dotc.png");
 	}
@@ -117,26 +108,10 @@ public class PSystemVersion extends AbstractPSystem {
 		return getImage("dotd.png");
 	}
 
-	public static BufferedImage getApple2Image() {
-		return getImageWebp("apple2.png");
-	}
-
 	private static BufferedImage getImage(final String name) {
 		try {
 			final InputStream is = PSystemVersion.class.getResourceAsStream(name);
 			final BufferedImage image = ImageIO.read(is);
-			is.close();
-			return image;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
-	}
-
-	private static BufferedImage getImageWebp(final String name) {
-		try {
-			final InputStream is = PSystemVersion.class.getResourceAsStream(name);
-			final BufferedImage image = Dedication.getBufferedImage(is);
 			is.close();
 			return image;
 		} catch (IOException e) {
@@ -183,7 +158,6 @@ public class PSystemVersion extends AbstractPSystem {
 	public static PSystemVersion createShowVersion() {
 		final List<String> strings = new ArrayList<String>();
 		strings.add("<b>PlantUML version " + Version.versionString() + "</b> (" + Version.compileTimeString() + ")");
-		strings.add("(" + License.getCurrent() + " source distribution)");
 		GraphvizCrash.checkOldVersionWarning(strings);
 		if (OptionFlags.ALLOW_INCLUDE) {
 			if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE) {
@@ -231,7 +205,6 @@ public class PSystemVersion extends AbstractPSystem {
 		final List<String> strings = new ArrayList<String>();
 		add(strings, "<b>PlantUML version " + Version.versionString() + "</b> (" + Version.compileTimeString() + ")",
 				withTag);
-		add(strings, "(" + License.getCurrent() + " source distribution)", withTag);
 		add(strings, " ", withTag);
 		add(strings, "<u>Original idea</u>: Arnaud Roques", withTag);
 		add(strings, "<u>Word Macro</u>: Alain Bertucat & Matthieu Sabatier", withTag);
@@ -275,22 +248,6 @@ public class PSystemVersion extends AbstractPSystem {
 			strings.add(ste.toString());
 		}
 		return new PSystemVersion(false, strings);
-	}
-
-	public static PSystemVersion createKeyDistributor() throws IOException {
-		final LicenseInfo license = LicenseInfo.retrieveDistributor();
-		BufferedImage im = null;
-		final List<String> strings = new ArrayList<String>();
-		if (license == null) {
-			strings.add("No license found");
-		} else {
-			strings.add(license.getOwner());
-			strings.add(license.getContext());
-			strings.add(license.getGenerationDate().toString());
-			strings.add(license.getExpirationDate().toString());
-			im = LicenseInfo.retrieveDistributorImage(license);
-		}
-		return new PSystemVersion(strings, im);
 	}
 
 	public static PSystemVersion createPath() throws IOException {

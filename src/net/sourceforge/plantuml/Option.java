@@ -282,8 +282,6 @@ public class Option {
 				this.decodeurl = true;
 			} else if (s.equalsIgnoreCase("-version")) {
 				OptionPrint.printVersion();
-			} else if (s.matches("(?i)^-li[sc][ea]n[sc]e\\s*$")) {
-				OptionPrint.printLicense();
 			} else if (s.startsWith("-DPLANTUML_LIMIT_SIZE=")) {
 				final String v = s.substring("-DPLANTUML_LIMIT_SIZE=".length());
 				if (v.matches("\\d+")) {
